@@ -55,9 +55,9 @@ const RealtimeCloud: React.FC<RealtimeCloudProps> = ({ words }) => {
 
       // To prevent overlap, we treat the word as a circle.
       // Since words are usually wider than tall, using half-width as radius
-      // ensures no horizontal overlap. 
-      // REDUCED RADIUS: Multiplied by 0.9 to allow tighter packing (slightly risky but denser)
-      const radius = (textWidth / 2) * 0.9;
+      // ensures no horizontal overlap. Vertical gaps are the trade-off for zero overlap.
+      // We add a small padding of 1px.
+      const radius = (textWidth / 2) + 1;
 
       return {
         ...w,
@@ -71,17 +71,19 @@ const RealtimeCloud: React.FC<RealtimeCloudProps> = ({ words }) => {
 
     // Configure the physics simulation
     const simulation = d3.forceSimulation(nodes as any)
-      // REMOVED: forceManyBody (repulsion) to allow words to cluster tightly
-      
+      // Repel nodes from each other to avoid initial clumping
+      .force("charge", d3.forceManyBody().strength(d => -((d as any).radius / 2)))
       // Collision force using the calculated radius
       .force("collide", d3.forceCollide()
         .radius((d: any) => d.radius)
         .strength(1)
-        .iterations(4) // More iterations for stability in tight packs
+        .iterations(3)
       )
-      // INCREASED GRAVITY: Stronger X and Y pull to the center to mimic the reference image
-      .force("x", d3.forceX(0).strength(0.3))
-      .force("y", d3.forceY(0).strength(0.3));
+      // Pull nodes toward the center
+      .force("center", d3.forceCenter(0, 0).strength(0.08))
+      // Add separate X/Y forces to encourage a cloud shape but respect collision
+      .force("x", d3.forceX(0).strength(0.05))
+      .force("y", d3.forceY(0).strength(0.05));
 
     // Render the text elements
     const textElements = g.selectAll("text")
