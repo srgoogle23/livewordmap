@@ -1,0 +1,5 @@
+{
+  "name": "LiveWordMap",
+  "description": "A real-time word cloud application. 100% Client-side (P2P). No API keys or servers required.",
+  "requestFramePermissions": []
+}
