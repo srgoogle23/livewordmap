@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Peer, { DataConnection } from 'peerjs';
 import { MAX_CHAR_LIMIT, PeerMessage, WordData } from '../types';
+import { PEER_CONFIG } from '../utils/peerConfig';
 import { Send, CheckCircle2, AlertCircle, Wifi, Cloud, Keyboard, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import RealtimeCloud from '../components/RealtimeCloud';
@@ -29,7 +30,7 @@ const Join: React.FC = () => {
         return;
     }
 
-    const peer = new Peer();
+    const peer = new Peer(PEER_CONFIG);
     peerRef.current = peer;
 
     peer.on('open', () => {
