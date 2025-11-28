@@ -3,7 +3,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import Peer, { DataConnection } from 'peerjs';
 import { generateRoomId } from '../utils/color';
 import { WordData, PeerMessage } from '../types';
-import { PEER_CONFIG, PEER_CONFIG_FALLBACK } from '../utils/peerConfig';
+import { PEER_CONFIG } from '../utils/peerConfig';
 import RealtimeCloud from '../components/RealtimeCloud';
 import Modal from '../components/Modal';
 import LanguageToggle from '../components/LanguageToggle';
@@ -59,18 +59,6 @@ const Host: React.FC = () => {
         console.error("P2P Error:", err);
         if (err.type === 'unavailable-id') {
             setError("Erro ao gerar ID. Tente recarregar a página.");
-        } else if (err.type === 'network' || err.type === 'server-error') {
-            // Try fallback to default server
-            console.log('Trying fallback server...');
-            const fallbackPeer = new Peer(id, PEER_CONFIG_FALLBACK);
-            fallbackPeer.on('open', () => {
-                peerRef.current = fallbackPeer;
-                setRoomId(id);
-                setError(null);
-            });
-            fallbackPeer.on('error', () => {
-                setError(t.host.connectionError);
-            });
         } else {
             setError(t.host.connectionError);
         }
